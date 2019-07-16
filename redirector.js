@@ -46,7 +46,6 @@
      */
     window.addEventListener('ajaxReadyStateChange', function (e) {
         if (e.detail.readyState === 4) {
-            console.log(e.detail); // XMLHttpRequest Object
             if (/^https:\/\/osu.ppy.sh\/beatmapsets(\/)?[0-9]*$/.test(e.detail.responseURL)) {
                 // wait a while for dom rendering
                 setTimeout(handleNewSite, 500);
