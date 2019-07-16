@@ -8,7 +8,7 @@
 // @grant        none
 // ==/UserScript==
 
-(function () {
+(() => {
     'use strict';
 
     /**
@@ -22,7 +22,7 @@
     /**
      * The new osu site is a single page app, modify the xhr here for listening page redirect.
      */
-    (function () {
+    (() => {
         function ajaxEventTrigger(event) {
             let ajaxEvent = new CustomEvent(event, {detail: this});
             window.dispatchEvent(ajaxEvent);
@@ -34,7 +34,7 @@
             let realXHR = new oldXHR();
             realXHR.addEventListener('readystatechange', function () {
                 ajaxEventTrigger.call(this, 'ajaxReadyStateChange');
-            }, false);
+            });
             return realXHR;
         }
 
@@ -44,7 +44,7 @@
     /**
      * listen page redirect.
      */
-    window.addEventListener('ajaxReadyStateChange', function (e) {
+    window.addEventListener('ajaxReadyStateChange', e =>{
         if (e.detail.readyState === 4) {
             if (/^https:\/\/osu.ppy.sh\/beatmapsets(\/)?[0-9]*$/.test(e.detail.responseURL)) {
                 // wait a while for dom rendering
@@ -105,6 +105,8 @@
                 let newNode = deepCloneNode(downloadLink);
                 replaceUrl(newNode, -2);
                 newNode.style.backgroundColor = "#4ad";
+                let textNode = newNode.getElementsByClassName("btn-osu-big__left")[0];
+                textNode.innerHTML = "BloodCat";
                 iconBoxes[i].appendChild(newNode);
             }
         }
