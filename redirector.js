@@ -22,29 +22,26 @@
     /**
      * The new osu site is a single page app, modify the xhr here for listening page redirect.
      */
-    (() => {
-        function ajaxEventTrigger(event) {
-            let ajaxEvent = new CustomEvent(event, {detail: this});
-            window.dispatchEvent(ajaxEvent);
-        }
+    let oldXHR = window.XMLHttpRequest;
+    window.XMLHttpRequest = newXHR;
 
-        let oldXHR = window.XMLHttpRequest;
+    function newXHR() {
+        let realXHR = new oldXHR();
+        realXHR.addEventListener('readystatechange', function () {
+            ajaxEventTrigger.call(this, 'ajaxReadyStateChange');
+        });
+        return realXHR;
+    }
 
-        function newXHR() {
-            let realXHR = new oldXHR();
-            realXHR.addEventListener('readystatechange', function () {
-                ajaxEventTrigger.call(this, 'ajaxReadyStateChange');
-            });
-            return realXHR;
-        }
-
-        window.XMLHttpRequest = newXHR;
-    })();
+    function ajaxEventTrigger(event) {
+        let ajaxEvent = new CustomEvent(event, {detail: this});
+        window.dispatchEvent(ajaxEvent);
+    }
 
     /**
      * listen page redirect.
      */
-    window.addEventListener('ajaxReadyStateChange', e =>{
+    window.addEventListener('ajaxReadyStateChange', e => {
         if (e.detail.readyState === 4) {
             if (/^https:\/\/osu.ppy.sh\/beatmapsets(\/)?[0-9]*$/.test(e.detail.responseURL)) {
                 // wait a while for dom rendering
